@@ -5,9 +5,9 @@ import Button from "react-bootstrap/Button";
 import Row from "react-bootstrap/Row";
 import { NavLink, useLocation, useHistory } from "react-router-dom";
 import { LOGIN_ROUTE, REGISTRATION_ROUTE, SHOP_ROUTE } from "../utils/consts";
-import { login, registration } from "../http/userAPI";
 import { observer } from "mobx-react-lite";
 import { Context } from "../index";
+import { login, registration } from "../components/redux/auth";
 
 const Auth = observer(() => {
   const { user } = useContext(Context);
@@ -29,7 +29,7 @@ const Auth = observer(() => {
       user.setIsAuth(true);
       history.push(SHOP_ROUTE);
     } catch (e) {
-      console.log(e.message);
+      alert(e.response.data.message);
     }
   };
 

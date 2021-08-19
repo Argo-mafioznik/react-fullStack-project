@@ -1,74 +1,132 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Button, Card, Col, Container, Image, Row } from "react-bootstrap";
 import bigStar from "../assets/bigStar.png";
-import { useParams } from "react-router-dom";
-import { fetchOneDevice } from "../http/deviceAPI";
+import { useHistory, useParams } from "react-router-dom";
+import {
+  addProductToCart,
+  deleteDevice,
+  fetchDevices,
+  fetchOneDevice,
+} from "../components/redux/device";
+import { SHOP_ROUTE } from "../utils/consts";
+import Footer from "../components/Footer";
+import { Context } from "../index";
 
 const DevicePage = () => {
   const [device, setDevice] = useState({ info: [] });
   const { id } = useParams();
+  const history = useHistory();
+  const { user } = useContext(Context);
 
   useEffect(() => {
     fetchOneDevice(id).then((data) => setDevice(data));
   }, []);
 
+  const deleteItem = (id) => {
+    deleteDevice(id);
+    history.push(SHOP_ROUTE);
+  };
+
+  let email = localStorage.getItem("email");
+  console.log(email);
+
+  // const addDeviceToCart = () => {
+  //   console.log();
+  //   addProductToCart();
+  // };
+
   return (
-    <Container className="mt-3">
-      <Row>
-        <Col md={4}>
-          <Image
-            width={300}
-            height={300}
-            src={process.env.REACT_APP_API_URL + device.img}
-          />
-        </Col>
-        <Col md={4}>
-          <Row className="d-flex flex-column align-items-center">
-            <h2>{device.name}</h2>
-            <div
-              className="d-flex align-items-center justify-content-center"
+    <>
+      <Container className="mt-3">
+        <hr style={{ marginBottom: 30 }} />
+        <Row>
+          <Col md={4}>
+            <Card
+              className="d-flex flex-column align-items-center justify-content-around"
               style={{
-                background: `url(${bigStar}) no-repeat center center`,
-                width: 240,
-                height: 240,
-                backgroundSize: "cover",
-                fontSize: 64,
+                width: 300,
+                height: 300,
+                fontSize: 32,
+                border: "none",
               }}
             >
-              {device.rating}5
-            </div>
-          </Row>
-        </Col>
-        <Col md={4}>
-          <Card
-            className="d-flex flex-column align-items-center justify-content-around"
-            style={{
-              width: 300,
-              height: 300,
-              fontSize: 32,
-              border: "5px solid lightgray",
-            }}
-          >
-            <h3>От: {device.price} руб.</h3>
-            <Button variant={"outline-dark"}>Добавить в корзину</Button>
-          </Card>
-        </Col>
-      </Row>
-      <Row className="d-flex flex-column m-3">
-        <h1>Характеристики</h1>
-        {device.info.map((info, index) => (
-          <Row
-            key={info.id}
-            style={{
-              background: index % 2 === 0 ? "lightgray" : "transparent",
-              padding: 10,
-            }}
-          >
-            {info.title}: {info.description}
-          </Row>
-        ))}
-      </Row>
-    </Container>
+              <h3>{device.name}</h3>
+            </Card>
+          </Col>
+          <Col md={4}>
+            <Image
+              style={{
+                objectFit: "contain",
+              }}
+              width={300}
+              height={300}
+              src={device.img}
+            />
+          </Col>
+          <Col md={4}>
+            <Card
+              className="d-flex flex-column align-items-center justify-content-around"
+              style={{
+                width: 300,
+                height: 300,
+                fontSize: 32,
+                border: "none",
+              }}
+            >
+              <h3>Цена: {device.price} ₽</h3>
+            </Card>
+          </Col>
+        </Row>
+        <hr style={{ marginTop: 30 }} />
+        <Row className="d-flex flex-column mt-5 mb-4">
+          <h1 style={{ marginTop: 20, marginBottom: 30 }}>Характеристики:</h1>
+          {device.info.map((info, index) => (
+            <Row
+              key={info.id}
+              style={{
+                padding: 10,
+                marginBottom: 3,
+                fontSize: 17,
+              }}
+            >
+              {info.title}: {info.description}
+            </Row>
+          ))}
+        </Row>
+        <hr style={{ marginBottom: 40 }} />
+        {email === "admin@gmail.com" ? (
+          <>
+            <Button
+              style={{
+                backgroundColor: "black",
+                border: "none",
+                padding: 10,
+                marginTop: 10,
+                marginBottom: 40,
+              }}
+              onClick={() => deleteItem(id)}
+            >
+              УДАЛИТЬ ПРОДУКТ
+            </Button>
+            {/* 
+            <Button
+              style={{
+                backgroundColor: "black",
+                border: "none",
+                padding: 10,
+                marginTop: 10,
+                marginLeft: 50,
+                marginBottom: 40,
+              }}
+              onClick={() => addProductToCart(id)}
+            >
+              ДОБАВИТЬ ПРОДУКТ В КОРЗИНУ
+            </Button> */}
+          </>
+        ) : null}
+      </Container>
+      <Footer />
+    </>
   );
 };
 
