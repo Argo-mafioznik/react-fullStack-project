@@ -1,5 +1,3 @@
-const uuid = require("uuid");
-const path = require("path");
 const { Device, DeviceInfo } = require("../models/models");
 const ApiError = require("../error/ApiError");
 
@@ -85,18 +83,18 @@ class DeviceController {
   }
 
   async edit(req, res, next) {
-    let data = req.body;
+    let { name, price, img } = req.body;
     const { id } = req.params;
 
-    let device = await Device.findOne({
-      where: { id },
-      include: [{ model: DeviceInfo, as: "info" }],
-    });
-    // device.save()
-    device.setDataValue("info", JSON.stringify(data.info));
+    let device = await Device.update(
+      { name, price, img },
+      {
+        where: { id },
+        //  include: [{ model: DeviceInfo, as: "info" }]
+      }
+    );
     console.log(device);
-    await device.save();
-    res.json(device);
+    return res.json(device);
   }
 }
 
