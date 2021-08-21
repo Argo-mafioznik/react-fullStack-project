@@ -14,7 +14,7 @@ const App = observer(() => {
 
   useEffect(() => {
     check()
-      .then((data) => {
+      .then(() => {
         user.setUser(true);
         user.setIsAuth(true);
       })
@@ -22,7 +22,16 @@ const App = observer(() => {
   }, []);
 
   if (loading) {
-    return <Spinner animation={"grow"} />;
+    return (
+      <Spinner
+        style={{
+          display: "flex",
+          margin: "0 auto",
+          marginTop: "20%",
+        }}
+        animation={"border"}
+      />
+    );
   }
 
   return (

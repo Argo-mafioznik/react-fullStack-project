@@ -23,8 +23,7 @@ const DevicePage = () => {
   }, []);
 
   const deleteItem = (id) => {
-    deleteDevice(id);
-    history.push(SHOP_ROUTE);
+    deleteDevice(id).then((_) => history.push(SHOP_ROUTE));
   };
 
   let email = localStorage.getItem("email");
